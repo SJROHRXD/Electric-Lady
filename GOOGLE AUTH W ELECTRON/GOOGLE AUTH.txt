@@ -1,0 +1,52 @@
+Is there any way to perform google authentication from within electron App?
+[1:47 AM] 
+OP
+ Adriel: My Team first built our desktop app with electron v11 about 3 years ago, Our first authentication system involved going to default browser to perform authentication and re-launch the electron app with tokens.
+However this UX was poor for our customers since the part of re-launching the app took a long time. In addition to this saving and refreshing the tokens proved to be challenging to stabilize.
+
+So we changed the authentication flow, such that authentication fully happens from within electron BrowserWindow. This means that the authentication service (in our case AWS Cognito) could manage the tokens and their refreshing. It also removed the need for the app to be restarted.
+
+Now the problem is: we are updating (node js 14-> 18 and electron v11 -> v25) and it seems now google has blocked google auth for accounts with MFA enabled.
+It says the browser is not secure. 
+
+I searched online for this case it and it seems sometime ago google stopped allowing us to authenticate by google from non safe apps (including electron apps)
+Is there any workaround that could allow signing in with google, without leaving electron app?
+[6:53 AM]Dekharen: I don't know if there is a way around this. I'd expect the flow is now to always open a browser window and get the info with a deep link.
+
+That being said, there's apparently a hacky way : 
+https://stackoverflow.com/questions/66769003/how-can-i-use-google-sign-in-inside-of-an-electron-desktop-application
+
+ view.webContents.userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0";
+Stack Overflow
+How can I use Google sign-in inside of an Electron desktop applicat...
+I'm using Node.js and Express to make a simple app. It relies heavily on Google sign-in for profile pictures and nicknames, and when testing it in a new Electron app I got thrown the error -
+
+&quot...
+Image
+[6:53 AM]Dekharen: It may also be possible to register your app with google (?), I'm not sure.
+[6:56 AM] 
+OP
+ Adriel: Thanks for the reply @Dekharen Let me try the workaround and see. 
+As for registering with google, I didn't see any indications that it may be possible so far 
+[6:58 AM]Dekharen: The project that this 2019 thread refers to this project which was maintained for a while; you can look at the implementation they ended up having : 
+https://github.com/wexond/browser-base/blob/master/src/main/user-agent.ts
+GitHub
+browser-base/src/main/user-agent.ts at master · wexond/browser-base
+Modern and feature-rich web browser base based on Electron - wexond/browser-base
+browser-base/src/main/user-agent.ts at master · wexond/browser-base
+[7:00 AM]Dekharen: Sounds about right :/
+[7:01 AM]Dekharen: (I also checked forks of similar project that are still open, they use this implementation also. I think it should work to a degree ?)
+[7:03 AM]Dekharen: Also, from the original thread : 
+I had to add the userAgent upon the loadURL: browserView.webContents.loadURL(someURL, { userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0"})
+
+So maybe the actual implementation varies a little bit depending on the usecase.
+[11:43 AM] 
+OP
+ Adriel: Sharing update:|
+I tried the proposed workaround and almost nothing was working
+until I did this:
+someWin.webContents.setUserAgent(someWin.webContents.getUserAgent().replace("Electron", "Chrome"));
+someWin.webContents.loadURL(url)
+
+
+this seems to work for now, let's hope it stays so
