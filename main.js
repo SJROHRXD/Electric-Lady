@@ -1,6 +1,7 @@
 // import { app, BrowserWindow } from 'electron';
 // ES6 modules are not yet directly supported in Electron according to their docs
 const {app, BrowserWindow} = require('electron');
+const path = require('path');
 
 // app controls your application's event lifecycle
 // BrowserWindow creates and manages your application's windows
@@ -9,10 +10,17 @@ const createWindow = () => {
     const win = new BrowserWindow({
         width: 800,
         height: 600,
+        webPreferences: {
+            preload: path.join(__dirname,'preload.js')
+        }
     });
 
     win.loadFile('index.html');
 }
+
+// There are two Node.js concepts that are used here: __dirname and path.join
+// The __dirname string points to the path of the currently executing script (in this case, your project's root folder).
+// The path.join API joins multiple path segments together, creating a combined path string that works across all platforms.
 
 // createWindow loads web page into a new BrowserWindow instance
 // loadFile loads a local HTML file into the window
