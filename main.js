@@ -11,7 +11,9 @@ const createWindow = () => {
         width: 800,
         height: 600,
         webPreferences: {
-            preload: path.join(__dirname,'preload.js')
+            preload: path.join(__dirname,'preload.js'),
+            contextIsolation: true,
+            nodeIntegration: false
         }
     });
 
@@ -24,10 +26,6 @@ const createWindow = () => {
 
 // createWindow loads web page into a new BrowserWindow instance
 // loadFile loads a local HTML file into the window
-
-app.whenReady().then(() => {
-    createWindow();
-})
 
 // whenReady waits until Electron has finished initializing
 // Many of Electron's core modules are Node.js event transmitters that adhere to asynchoronous event-driven architecture
@@ -42,15 +40,16 @@ app.whenReady().then(() => {
 // https://www.electronjs.org/docs/latest/tutorial/tutorial-first-app
 
 // Quit app when Windows are all closed
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwn') app.quit();
-})
+
 
 app.whenReady().then(() => {
     createWindow();
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
-    })
-})
+    });
+});
 
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') app.quit();
+});
