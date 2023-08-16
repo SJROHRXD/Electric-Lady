@@ -8,8 +8,12 @@ const func = async () => {
 
 func();
 
-console.log("Hello from the renderer process!");
+
+
 console.log(`Node version: ${window.electronAPI.node()}`);
+console.log(`Chrome version: ${window.electronAPI.chrome()}`);
+console.log(`Electron version: ${window.electronAPI.electron()}`);
+
 window.electronAPI.send('some-channel', 'some-data');
 
 const subscription = window.electronAPI.on('some-channel', (data) => {
