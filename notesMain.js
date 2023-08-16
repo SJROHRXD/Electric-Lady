@@ -24,3 +24,5 @@
 
 // import { app, BrowserWindow } from 'electron';
 // ES6 modules are not yet directly supported in Electron according to their docs
+
+// https://www.electronjs.org/docs/latest/tutorial/tutorial-preload#summary
