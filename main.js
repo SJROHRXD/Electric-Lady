@@ -32,3 +32,17 @@ app.whenReady().then(() => {
 // Electron allows the option to implement them in your app code
 // Check against Node's process.platform variable to run code conditionally based on the OS
 // https://www.electronjs.org/docs/latest/tutorial/tutorial-first-app
+
+// Quit app when Windows are all closed
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwn') app.quit();
+})
+
+app.whenReady().then(() => {
+    createWindow();
+
+    app.on('activate', () => {
+        if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    })
+})
+
